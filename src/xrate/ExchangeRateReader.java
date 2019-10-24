@@ -1,5 +1,10 @@
 package xrate;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import jdk.internal.util.xml.impl.Input;
+
 import java.io.*;
 import java.net.URL;
 import java.util.Properties;
@@ -10,6 +15,7 @@ import java.util.Properties;
 public class ExchangeRateReader {
 
     private String accessKey;
+    private String base;
 
     /**
      * Construct an exchange rate reader using the given base URL. All requests
@@ -29,9 +35,7 @@ public class ExchangeRateReader {
          * the two methods below. All you need to do here is store the
          * provided `baseURL` in a field so it will be accessible later.
          */
-
-        // TODO Your code here
-
+        base = baseURL;
         // Reads the access keys from `etc/access_keys.properties`
         readAccessKeys();
     }
@@ -83,11 +87,18 @@ public class ExchangeRateReader {
      */
     public float getExchangeRate(String currencyCode, int year, int month, int day) throws IOException {
         // TODO Your code here
+        String allUrl = base + year + "-" + month + "-" + day + "?access_key=" + accessKey + "&symbols=" + currencyCode;
+        URL url = new URL(allUrl);
+        InputStream inputStream = url.openStream();
+
+        InputStreamReader reader = new InputStreamReader(inputStream);
+        JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonObject();
+        System.out.println(jsonObject.getAsJsonObject());
 
         // Remove the next line when you've implemented this method.
-        throw new UnsupportedOperationException();
-    }
-
+//        throw new UnsupportedOperationException()
+    ;
+}
     /**
      * Get the exchange rate of the first specified currency against the second
      * on the specified date.
@@ -109,6 +120,7 @@ public class ExchangeRateReader {
             String fromCurrency, String toCurrency,
             int year, int month, int day) throws IOException {
         // TODO Your code here
+        //getRate(JsonObject ratesInfo, String currency)
 
         // Remove the next line when you've implemented this method.
         throw new UnsupportedOperationException();
