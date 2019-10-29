@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import jdk.internal.util.xml.impl.Input;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Properties;
 
@@ -93,11 +94,17 @@ public class ExchangeRateReader {
 
         InputStreamReader reader = new InputStreamReader(inputStream);
         JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonObject();
-        System.out.println(jsonObject.getAsJsonObject());
+
+        System.out.println(jsonObject);
+
+        float jsonRates = jsonObject.getAsJsonObject("rates").get(currencyCode).getAsFloat(); // trying to pull the rates out of the parsed json doc
+
+        return jsonRates; // returning the rate as a float
+
 
         // Remove the next line when you've implemented this method.
-//        throw new UnsupportedOperationException()
-    ;
+//        throw new UnsupportedOperationException();
+
 }
     /**
      * Get the exchange rate of the first specified currency against the second
@@ -120,7 +127,7 @@ public class ExchangeRateReader {
             String fromCurrency, String toCurrency,
             int year, int month, int day) throws IOException {
         // TODO Your code here
-        //getRate(JsonObject ratesInfo, String currency)
+        
 
         // Remove the next line when you've implemented this method.
         throw new UnsupportedOperationException();
