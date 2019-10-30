@@ -1,12 +1,9 @@
 package xrate;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import jdk.internal.util.xml.impl.Input;
 
 import java.io.*;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Properties;
 
@@ -88,23 +85,29 @@ public class ExchangeRateReader {
      */
     public float getExchangeRate(String currencyCode, int year, int month, int day) throws IOException {
         // TODO Your code here
-        String allUrl = base + year + "-" + month + "-" + day + "?access_key=" + accessKey + "&symbols=" + currencyCode;
-        URL url = new URL(allUrl);
+        String baseUrl;
+        if((day >= 10) && (month < 10)) {
+            baseUrl = base + year + "-0" + month + "-" + day + "?access_key=" + accessKey;
+        }
+        else if((day < 10) && (month >= 10)) {
+            baseUrl = base + year + "-" + month + "-0" + day + "?access_key=" + accessKey;
+        }
+        else if((day < 10) && (month < 10)) {
+            baseUrl = base + year + "-0" + month + "-0" + day + "?access_key=" + accessKey;
+        }
+        else {
+            baseUrl = base + year + "-" + month + "-" + day + "?access_key=" + accessKey;
+        }
+        URL url = new URL(baseUrl);
         InputStream inputStream = url.openStream();
 
+        System.out.println("The base " + baseUrl);
         InputStreamReader reader = new InputStreamReader(inputStream);
         JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonObject();
 
-        System.out.println(jsonObject);
-
         float jsonRates = jsonObject.getAsJsonObject("rates").get(currencyCode).getAsFloat(); // trying to pull the rates out of the parsed json doc
 
-        return jsonRates; // returning the rate as a float
-
-
-        // Remove the next line when you've implemented this method.
-//        throw new UnsupportedOperationException();
-
+        return jsonRates;
 }
     /**
      * Get the exchange rate of the first specified currency against the second
@@ -127,9 +130,32 @@ public class ExchangeRateReader {
             String fromCurrency, String toCurrency,
             int year, int month, int day) throws IOException {
         // TODO Your code here
-        
+        String TFUrl;
 
-        // Remove the next line when you've implemented this method.
-        throw new UnsupportedOperationException();
+        if((day >= 10) && (month < 10)) {
+            TFUrl = base + year + "-0" + month + "-" + day + "?access_key=" + accessKey;
+        }
+        else if((day < 10) && (month >= 10)) {
+            TFUrl = base + year + "-" + month + "-0" + day + "?access_key=" + accessKey;
+        }
+        else if((day < 10) && (month < 10)) {
+            TFUrl = base + year + "-0" + month + "-0" + day + "?access_key=" + accessKey;
+        }
+        else {
+            TFUrl = base + year + "-" + month + "-" + day + "?access_key=" + accessKey;
+        }
+        System.out.println("I am the one " + TFUrl);
+        URL url = new URL(TFUrl);
+        InputStream inputStream = url.openStream();
+
+        InputStreamReader reader = new InputStreamReader(inputStream);
+        JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonObject();
+
+        float from = jsonObject.getAsJsonObject("rates").get(fromCurrency).getAsFloat();
+        float to = jsonObject.getAsJsonObject("rates").get(toCurrency).getAsFloat();
+
+        float jsonTFRates = from/to;
+
+        return jsonTFRates;
     }
 }
